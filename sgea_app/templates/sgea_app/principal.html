@@ -1,0 +1,91 @@
+{% load static %}
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Eventos Acadêmicos - Início</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'styles/styles.css' %}">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <div class="container">
+    <a class="navbar-brand" href="{% url 'principal' %}">Eventos Acadêmicos</a>
+
+    <div>
+      <a class="btn btn-outline-primary me-2" href="{% url 'participante' %}">Participante</a>
+      <a class="btn btn-outline-primary me-2" href="{% url 'login' %}">Login</a>
+      <a class="btn btn-primary" href="{% url 'cadastro' %}">Registrar</a>
+    </div>
+  </div>
+</nav>
+
+<main class="container py-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1>Próximos Eventos</h1>
+    <a href="{% url 'organizador' %}" class="btn btn-success">Criar Evento</a>
+  </div>
+
+  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+    {% comment %} Lista de 5 eventos de demonstração {% endcomment %}
+    <div class="col">
+      <div class="card h-100">
+        <div class="card-body">
+          <h5 class="card-title">Semana de Matemática</h5>
+          <p class="card-text">Tipo: Semana Acadêmica</p>
+          <p class="card-text">Data: 01/11/2025 - 05/11/2025</p>
+          <p class="card-text">Local: Auditório A</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="card h-100">
+        <div class="card-body">
+          <h5 class="card-title">Palestra sobre IA</h5>
+          <p class="card-text">Tipo: Palestra</p>
+          <p class="card-text">Data: 20/10/2025</p>
+          <p class="card-text">Local: Sala 101</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="card h-100">
+        <div class="card-body">
+          <h5 class="card-title">Minicurso de Python</h5>
+          <p class="card-text">Tipo: Minicurso</p>
+          <p class="card-text">Data: 10/11/2025 - 12/11/2025</p>
+          <p class="card-text">Local: Laboratório 3</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="card h-100">
+        <div class="card-body">
+          <h5 class="card-title">Seminário de Física</h5>
+          <p class="card-text">Tipo: Seminário</p>
+          <p class="card-text">Data: 01/12/2025</p>
+          <p class="card-text">Local: Auditório B</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="card h-100">
+        <div class="card-body">
+          <h5 class="card-title">Semana de Biologia</h5>
+          <p class="card-text">Tipo: Semana Acadêmica</p>
+          <p class="card-text">Data: 10/12/2025 - 15/12/2025</p>
+          <p class="card-text">Local: Sala 202</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
