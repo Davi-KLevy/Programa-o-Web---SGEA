@@ -13,7 +13,7 @@ Arquivos
 Os arquivos válidos para esse trabalho são:
   BD/scripts (main branch)
   Documento de Requisitos.docx (main branch)
-  Conteúdo da master branch (Projeto_SGEA, sgea_app, db.sqlite3, manage.py
+  Conteúdo da master branch (Projeto_SGEA, sgea_app, db.sqlite3, manage.py)
   
   
   
