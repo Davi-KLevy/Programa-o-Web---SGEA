@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}Eventos Disponíveis{% endblock %}
+
+{% block content %}
+    <h2>Eventos Acadêmicos</h2>
+    {% if eventos %}
+        <ul>
+            {% for evento in eventos %}
+                <li>
+                    <h3>{{ evento.nome }} ({{ evento.tipo_evento }})</h3>
+                    <p>Local: {{ evento.local }}</p>
+                    <p>Data: {{ evento.data_inicial|date:"d/m/Y" }} a {{ evento.data_final|date:"d/m/Y" }}</p>
+                    <p>Vagas: {{ evento.quantidade_participantes }}</p>
+                    <a href="{% url 'detalhe_evento' evento.id %}">Ver Detalhes e Inscrição</a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Nenhum evento disponível no momento.</p>
+    {% endif %}
+{% endblock %}

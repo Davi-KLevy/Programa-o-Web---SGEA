@@ -122,4 +122,13 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-AUTH_USER_MODEL = 'sgea_app.UsuarioCustom'
+AUTH_USER_MODEL = 'sgea_app.usuario'
+
+# URL para onde o usuário será redirecionado após o login bem-sucedido.
+# Mapeia para a rota 'dashboard' que definimos nas URLs.
+LOGIN_REDIRECT_URL = 'dashboard'
+
+# URL para onde o usuário não autenticado será enviado se tentar acessar uma página restrita.
+LOGIN_URL = 'login'
+
+LOGOUT_REDIRECT_URL = 'login'

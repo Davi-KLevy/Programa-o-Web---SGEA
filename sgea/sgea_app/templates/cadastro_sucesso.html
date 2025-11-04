@@ -1,0 +1,12 @@
+{% extends "base_auth.html" %}
+
+{% block title %}Cadastro Concluído{% endblock %}
+
+{% block content %}
+    <h2>Cadastro Realizado com Sucesso!</h2>
+    <p>Olá, **{{ nome }}**! Seu cadastro foi concluído.</p>
+    <p>Uma vez que o requisito do sistema exige confirmação por e-mail, você receberá um e-mail de confirmação ou um código para ativar sua conta.</p>
+    <p>Você só poderá acessar as demais funcionalidades do sistema após esta confirmação.</p>
+    
+    <p><a href="{% url 'login' %}">Voltar para a página de Login</a></p>
+{% endblock %}
