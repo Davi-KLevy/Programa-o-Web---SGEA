@@ -1,9 +1,10 @@
 {% extends "base.html" %}
 
-{% block title %}Eventos Disponíveis{% endblock %}
+{% block title %}{{ title }}{% endblock %}
 
 {% block content %}
-    <h2>Eventos Acadêmicos</h2>
+    <h2>{{ title }}</h2>
+
     {% if eventos %}
         <ul>
             {% for evento in eventos %}
@@ -11,8 +12,11 @@
                     <h3>{{ evento.nome }} ({{ evento.tipo_evento }})</h3>
                     <p>Local: {{ evento.local }}</p>
                     <p>Data: {{ evento.data_inicial|date:"d/m/Y" }} a {{ evento.data_final|date:"d/m/Y" }}</p>
+                    <p>Horário: {{ evento.horario }}</p>
+                    <p>Professor Responsável: {{ evento.professor_responsavel.nome }}</p>
                     <p>Vagas: {{ evento.quantidade_participantes }}</p>
-                    <a href="{% url 'detalhe_evento' evento.id %}">Ver Detalhes e Inscrição</a>
+                    
+                    <p><a href="{% url 'detalhe_evento' evento.id %}">Ver Detalhes e Inscrever-se</a></p>
                 </li>
             {% endfor %}
         </ul>

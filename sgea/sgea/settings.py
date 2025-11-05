@@ -132,3 +132,12 @@ LOGIN_REDIRECT_URL = 'dashboard'
 LOGIN_URL = 'login'
 
 LOGOUT_REDIRECT_URL = 'login'
+
+# Habilita o uso de formatos de data/hora localizados nos formulários
+USE_L10N = True 
+
+# Define o formato de entrada de data que o Django deve esperar nos formulários
+DATE_INPUT_FORMATS = [
+    '%d/%m/%Y', # DD/MM/AAAA (padrão brasileiro)
+    '%Y-%m-%d', # AAAA-MM-DD (padrão ISO)
+]

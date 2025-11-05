@@ -2,6 +2,7 @@ from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from .managers import UsuarioManager 
+from django.utils import timezone
 
 class Usuario(AbstractBaseUser, PermissionsMixin):
     """
@@ -80,6 +81,20 @@ class Evento(models.Model):
     class Meta:
         verbose_name = "Evento"
         verbose_name_plural = "Eventos"
+
+    def esta_encerrado(self):
+        """ Verifica se a data final do evento já passou. """
+        return self.data_final < timezone.now().date()
+        
+    def status_certificado(self):
+        """ Determina o status dos certificados baseado na data final. """
+        if not self.esta_encerrado():
+            return 'Pendente (Evento Ativo)'
+        
+        # O certificado é gerado após a data de término.
+        # Se o evento está encerrado, o status é "Pronto para Emissão".
+        # Uma lógica mais robusta checaria se a automação já rodou.
+        return 'Pronto para Emissão'
 
     def __str__(self):
         return self.nome

@@ -9,14 +9,15 @@
     <header>
         <h1>SGEA</h1>
         <nav>
-            <a href="{% url 'home' %}">Início</a>
             {% if user.is_authenticated %}
+                {% if user.perfil == 'Aluno' or user.perfil == 'Professor' %}
+                    <a href="{% url 'home' %}">Início</a> 
+                    <a href="{% url 'meus_certificados' %}">Meus Certificados</a>
+                {% endif %}
                 <a href="{% url 'dashboard' %}">Dashboard</a>
                 {% if user.perfil == 'Organizador' %}
-                    <a href="{% url 'gerenciar_eventos' %}">Gerenciar Eventos</a>
                     <a href="{% url 'registros_auditoria' %}">Auditoria</a>
                 {% endif %}
-                <a href="{% url 'meus_certificados' %}">Meus Certificados</a>
                 <form action="{% url 'logout' %}" method="post" style="display: inline;">
                     {% csrf_token %}
                     <button type="submit" 
@@ -25,6 +26,7 @@
                     </button>
                 </form>
             {% else %}
+                <a href="{% url 'home' %}">Início</a>
                 <a href="{% url 'login' %}">Login</a>
                 <a href="{% url 'cadastro_usuario' %}">Cadastrar</a>
             {% endif %}

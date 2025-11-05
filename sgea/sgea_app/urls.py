@@ -16,7 +16,6 @@ urlpatterns = [
     # Rotas de Organizador (Requer perfil 'Organizador')
     path('eventos/novo/', views.criar_evento, name='criar_evento'),
     path('eventos/editar/<int:evento_id>/', views.editar_evento, name='editar_evento'),
-    path('eventos/gerenciar/', views.listar_eventos_organizador, name='gerenciar_eventos'),
     path('evento/<int:evento_id>/inscritos/', views.lista_inscritos, name='lista_inscritos'),
     path('evento/<int:evento_id>/emitir_certificados/', views.emitir_certificados, name='emitir_certificados'),
     path('auditoria/', views.registros_auditoria, name='registros_auditoria'),
