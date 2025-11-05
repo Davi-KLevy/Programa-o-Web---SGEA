@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
+from django.contrib import messages 
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth import logout
 from django.utils import timezone
@@ -25,22 +26,40 @@ def is_aluno_or_professor(user):
 
 def lista_eventos(request):
     """
-    Exibe a lista de todos os eventos ativos. 
-    Se o usuário for Organizador (logado), é redirecionado para o dashboard.
+    Exibe a lista de eventos que ainda não começaram e que o usuário (se logado)
+    ainda não se inscreveu. Redireciona Organizadores para o dashboard.
     """
-    if request.user.is_authenticated and request.user.perfil == 'Organizador':
-        # Bloqueia o Organizador, pois ele só deve usar o dashboard
-        return redirect('dashboard') 
-        
     hoje = timezone.now().date()
     
-    # Busca eventos que a data final seja HOJE ou no futuro
-    eventos_ativos = Evento.objects.filter(
-        data_final__gte=hoje
-    ).order_by('data_inicial') # Ordena pelo mais próximo
+    # Filtro base: Apenas eventos que ainda não começaram
+    eventos_queryset = Evento.objects.filter(
+        data_inicial__gt=hoje
+    ).order_by('data_inicial')
     
+    if request.user.is_authenticated:
+        # 1. Restrição para Organizador
+        if request.user.perfil == 'Organizador':
+            return redirect('dashboard') 
+        
+        # 2. Filtragem para Aluno/Professor (excluir inscritos)
+        elif request.user.perfil in ['Aluno', 'Professor']:
+            
+            # Pega os IDs dos eventos em que o usuário está inscrito
+            eventos_inscritos_ids = Inscricao.objects.filter(
+                usuario=request.user
+            ).values_list('evento__id', flat=True)
+            
+            # Exclui da listagem todos os eventos que o usuário já está inscrito
+            eventos_disponiveis = eventos_queryset.exclude(
+                id__in=eventos_inscritos_ids
+            )
+            
+    else:
+        # 3. Usuário Não Logado (vê todos os eventos futuros)
+        eventos_disponiveis = eventos_queryset
+            
     context = {
-        'eventos': eventos_ativos,
+        'eventos': eventos_disponiveis,
         'title': 'Eventos Acadêmicos Disponíveis'
     }
     return render(request, 'lista_eventos.html', context)
@@ -81,45 +100,104 @@ def cadastro_usuario(request):
 # --- Rotas de Usuário Autenticado ---
 
 @login_required
-@login_required
 def dashboard(request):
     """ 
     Dashboard após o login (rota: /dashboard/). 
     Se Organizador, lista seus eventos.
+    Se Aluno/Professor, lista suas inscrições.
     """
     context = {}
+    usuario = request.user
     
-    if is_organizador(request.user):
-        # Se for Organizador, busca e lista seus eventos
+    if is_organizador(usuario):
+        # Se for Organizador
         eventos_organizados = Evento.objects.filter(
-            organizador=request.user
+            organizador=usuario
         ).order_by('data_inicial')
         
         context['eventos_organizados'] = eventos_organizados
         
-    # Lógica futura: Minhas Inscrições (para Aluno/Professor)
-    # if request.user.perfil in ['Aluno', 'Professor']:
-    #     minhas_inscricoes = Inscricao.objects.filter(usuario=request.user)
-    #     context['minhas_inscricoes'] = minhas_inscricoes
+    elif usuario.perfil in ['Aluno', 'Professor']:
+        # Se for Aluno ou Professor
+        
+        # Filtra as inscrições do usuário e pré-busca os dados do evento
+        minhas_inscricoes = Inscricao.objects.filter(
+            usuario=usuario
+        ).select_related('evento').order_by('evento__data_inicial')
+        
+        context['minhas_inscricoes'] = minhas_inscricoes
         
     return render(request, 'dashboard.html', context)
 
 @login_required
 def inscrever_evento(request, evento_id):
     """ 
-    Realiza a inscrição em um evento (rota: /inscrever/<id>/).
-    Apenas Alunos e Professores podem se inscrever.
+    Processa a inscrição de um usuário (Aluno/Professor) em um evento.
     """
-    # Lógica futura: Verificar se há vagas e se já está inscrito.
-    return HttpResponse(f"Processando inscrição no Evento ID: {evento_id}")
+    evento = get_object_or_404(Evento, pk=evento_id)
+    usuario = request.user
+    hoje = timezone.now().date()
+    
+    # 1. Restrição de Acesso (Apenas Aluno/Professor) 
+    if usuario.perfil not in ['Aluno', 'Professor']:
+        messages.error(request, "Apenas usuários com perfil Aluno ou Professor podem se inscrever em eventos.")
+        return redirect('home') # Redireciona de volta à lista de eventos
+        
+    # 2. Verificar se o evento já começou (só permite inscrição em eventos futuros)
+    if evento.data_inicial < hoje:
+        messages.error(request, f"Não é possível se inscrever no evento '{evento.nome}', pois ele já começou ou terminou.")
+        return redirect('home')
+
+    # 3. Verificar Inscrição Duplicada
+    if Inscricao.objects.filter(usuario=usuario, evento=evento).exists():
+        messages.warning(request, f"Você já está inscrito no evento '{evento.nome}'.")
+        return redirect('home') 
+
+    # 4. Verificar Limite de Vagas
+    total_inscritos = Inscricao.objects.filter(evento=evento).count()
+    
+    if total_inscritos >= evento.quantidade_participantes:
+        messages.error(request, f"O evento '{evento.nome}' atingiu o limite de vagas.")
+        return redirect('home')
+    
+    try:
+        # 5. Criar Inscrição
+        Inscricao.objects.create(usuario=usuario, evento=evento)
+        messages.success(request, f"Inscrição no evento '{evento.nome}' realizada com sucesso!")
+        
+    except Exception as e:
+        messages.error(request, f"Ocorreu um erro ao processar sua inscrição. Tente novamente.")
+        # Logar o erro 'e' aqui para depuração
+        
+    return redirect('home')
 
 @login_required
-def cancelar_inscricao(request, inscricao_id):
+def desinscrever_evento(request, evento_id):
     """ 
-    Cancela uma inscrição (rota: /cancelar_inscricao/<id>/).
+    Permite ao usuário (Aluno/Professor) cancelar sua inscrição em um evento futuro.
     """
-    # Lógica futura: Deletar ou inativar a Inscrição.
-    return HttpResponse(f"Cancelando Inscrição ID: {inscricao_id}")
+    evento = get_object_or_404(Evento, pk=evento_id)
+    usuario = request.user
+    hoje = timezone.now().date()
+    
+    # 1. Busca a inscrição
+    inscricao = get_object_or_404(Inscricao, usuario=usuario, evento=evento)
+    
+    # 2. Verifica se o evento já começou (só permite cancelamento em eventos futuros)
+    if evento.data_inicial < hoje:
+        messages.error(request, f"Não é possível cancelar a inscrição, pois o evento '{evento.nome}' já começou ou terminou.")
+        return redirect('dashboard')
+
+    # 3. Processa a desinscrição (usando POST, que é mais seguro)
+    if request.method == 'POST':
+        try:
+            inscricao.delete()
+            messages.success(request, f"Inscrição no evento '{evento.nome}' cancelada com sucesso.")
+        except Exception as e:
+            messages.error(request, "Ocorreu um erro ao cancelar sua inscrição.")
+        
+    # Redireciona para o dashboard, onde a lista de inscrições será atualizada
+    return redirect('dashboard')
 
 @login_required
 @user_passes_test(is_aluno_or_professor) # Apenas Aluno ou Professor
@@ -145,7 +223,7 @@ def criar_evento(request):
         if form.is_valid():
             evento = form.save(commit=False)
             
-            # Define o organizador responsável como o usuário logado [cite: 93]
+            # Define o organizador responsável como o usuário logado 
             evento.organizador = request.user 
             evento.save()
             

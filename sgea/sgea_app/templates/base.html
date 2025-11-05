@@ -34,6 +34,15 @@
     </header>
 
     <main>
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %} style="list-style: none; padding: 10px; margin-bottom: 10px; border: 1px solid; {% if message.tags == 'error' %} background-color: #fdd; border-color: red; color: darkred; {% elif message.tags == 'success' %} background-color: #dfd; border-color: green; color: darkgreen; {% else %} background-color: #ffc; border-color: orange; color: darkorange; {% endif %}">
+                        {{ message }}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
         {% block content %}
         {% endblock %}
     </main>

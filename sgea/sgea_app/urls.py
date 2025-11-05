@@ -10,7 +10,7 @@ urlpatterns = [
     # Rotas de Usuário Autenticado (Aluno/Professor/Organizador)
     path('dashboard/', views.dashboard, name='dashboard'), # Página inicial após login
     path('inscrever/<int:evento_id>/', views.inscrever_evento, name='inscrever_evento'),
-    path('cancelar_inscricao/<int:inscricao_id>/', views.cancelar_inscricao, name='cancelar_inscricao'),
+    path('evento/<int:evento_id>/desinscrever/', views.desinscrever_evento, name='desinscrever_evento'),
     path('meus_certificados/', views.meus_certificados, name='meus_certificados'),
     
     # Rotas de Organizador (Requer perfil 'Organizador')

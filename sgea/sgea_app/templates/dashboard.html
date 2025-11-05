@@ -61,11 +61,53 @@
 
     {% endif %}
 
-    {% if user.perfil == 'Aluno' or user.perfil == 'Professor' %}
-        <h3>Participação em Eventos</h3>
-        <ul>
-            <li><a href="{% url 'home' %}">Ver Eventos Disponíveis</a></li>
-            <li><a href="{% url 'meus_certificados' %}">Meus Certificados</a></li>
-            <li><a href="#">Minhas Inscrições</a></li> </ul>
+   {% if user.perfil == 'Aluno' or user.perfil == 'Professor' %}
+        <h4 style="margin-top: 20px;">Minhas Inscrições</h4>
+        
+        {% if minhas_inscricoes %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Evento</th>
+                        <th>Data</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for inscricao in minhas_inscricoes %}
+                        {% with evento=inscricao.evento %}
+                            <tr>
+                                <td>{{ evento.nome }} ({{ evento.tipo_evento }})</td>
+                                <td>{{ evento.data_inicial|date:"d/m/Y" }}</td>
+                                <td>
+                                    {% if evento.esta_encerrado %}
+                                        Encerrado
+                                    {% else %}
+                                        Ativo
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if not evento.esta_encerrado %}
+                                        <form method="post" action="{% url 'desinscrever_evento' evento.id %}" style="display: inline;">
+                                            {% csrf_token %}
+                                            <button type="submit" 
+                                                    style="background: none; border: none; padding: 0; color: red; cursor: pointer;"
+                                                    onclick="return confirm('Tem certeza que deseja cancelar sua inscrição no evento {{ evento.nome }}?');">
+                                                Desinscrever
+                                            </button>
+                                        </form>
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endwith %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>Você não está inscrito em nenhum evento no momento.</p>
+        {% endif %}
     {% endif %}
 {% endblock %}
