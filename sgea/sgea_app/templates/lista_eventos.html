@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+    <h2>{{ title }}</h2>
+
+    {% if eventos %}
+        
+        {% for evento in eventos %}
+            
+            <div class="evento-card" style="border: 1px solid #ccc; margin-bottom: 20px; padding: 15px; display: flex; justify-content: space-between; align-items: flex-start;">
+                
+                <div class="card-essenciais" style="width: 55%;">
+                    
+                    <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                        {% if evento.banner %}
+                            <img src="{{ evento.banner.url }}" alt="Banner do Evento" style="width: 80px; height: auto; margin-right: 15px;">
+                        {% endif %}
+                        <h3>{{ evento.nome }} ({{ evento.tipo_evento }})</h3>
+                    </div>
+                    
+                    <p><strong>Local:</strong> {{ evento.local }}</p>
+                    <p><strong>Data:</strong> {{ evento.data_inicial|date:"d/m/Y" }} - {{ evento.data_final|date:"d/m/Y" }} | <strong>Horário:</strong> {{ evento.horario }}</p>
+                    <p><strong>Vagas Disponíveis:</strong> {{ evento.quantidade_participantes }}</p>
+                    
+                    <a href="{% url 'inscrever_evento' evento.id %}" style="display: block; background-color: green; color: white; padding: 10px; text-align: center; text-decoration: none; margin-top: 15px;">
+                        Inscrever-se no Evento
+                    </a>
+                </div>
+                
+                <div class="card-detalhes-extras" style="width: 40%; padding-left: 15px; border-left: 1px dashed #eee;">
+                    <h4>Informações de Contato</h4>
+                    <p><strong>Professor Responsável:</strong> {{ evento.professor_responsavel.nome }}</p>
+                    <p><strong>Organizador do Evento:</strong> {{ evento.organizador.nome }}</p>
+                    
+                    </div>
+            </div>
+            
+        {% endfor %}
+    {% else %}
+        <p>Nenhum evento futuro disponível no momento.</p>
+    {% endif %}
+{% endblock %}

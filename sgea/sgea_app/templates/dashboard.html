@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+    <h2>Bem-vindo, {{ user.nome }}!</h2>
+    <p>Seu perfil: **{{ user.perfil }}**</p>
+
+    {% if user.perfil == 'Organizador' %}
+        <h3>Ferramentas de Gerenciamento</h3>
+        <ul>
+            <li><a href="{% url 'criar_evento' %}">Criar Novo Evento</a></li>
+            <li><a href="{% url 'registros_auditoria' %}">Consultar Registros de Auditoria</a></li>
+        </ul>
+
+        <h3 style="margin-top: 30px;">Meus Eventos Criados</h3>
+        
+        {% if eventos_organizados %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Data Início</th>
+                        <th>Professor Resp.</th>
+                        <th>Vagas</th>
+                        <th>Status</th> 
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for evento in eventos_organizados %}
+                        <tr>
+                            <td>{{ evento.nome }}</td>
+                            <td>{{ evento.data_inicial|date:"d/m/Y" }}</td>
+                            <td>{{ evento.professor_responsavel.nome }}</td>
+                            <td>{{ evento.quantidade_participantes }}</td>
+                            
+                            <td>
+                                {% if evento.esta_encerrado %}
+                                    Encerrado
+                                {% else %}
+                                    Ativo
+                                {% endif %}
+                            </td>
+                            
+                            <td>
+                                <a href="{% url 'editar_evento' evento.id %}">Editar</a> |
+                                <a href="{% url 'lista_inscritos' evento.id %}">Inscritos</a>
+                                
+                                {% if evento.esta_encerrado %}
+                                | <a href="{% url 'emitir_certificados' evento.id %}">Emitir Certificados</a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>Nenhum evento criado até o momento.</p>
+        {% endif %}
+
+    {% endif %}
+
+   {% if user.perfil == 'Aluno' or user.perfil == 'Professor' %}
+        <h4 style="margin-top: 20px;">Minhas Inscrições</h4>
+        
+        {% if minhas_inscricoes %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Evento</th>
+                        <th>Data</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for inscricao in minhas_inscricoes %}
+                        {% with evento=inscricao.evento %}
+                            <tr>
+                                <td>{{ evento.nome }} ({{ evento.tipo_evento }})</td>
+                                <td>{{ evento.data_inicial|date:"d/m/Y" }}</td>
+                                <td>
+                                    {% if evento.esta_encerrado %}
+                                        Encerrado
+                                    {% else %}
+                                        Ativo
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if not evento.esta_encerrado %}
+                                        <form method="post" action="{% url 'desinscrever_evento' evento.id %}" style="display: inline;">
+                                            {% csrf_token %}
+                                            <button type="submit" 
+                                                    style="background: none; border: none; padding: 0; color: red; cursor: pointer;"
+                                                    onclick="return confirm('Tem certeza que deseja cancelar sua inscrição no evento {{ evento.nome }}?');">
+                                                Desinscrever
+                                            </button>
+                                        </form>
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endwith %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>Você não está inscrito em nenhum evento no momento.</p>
+        {% endif %}
+    {% endif %}
+{% endblock %}

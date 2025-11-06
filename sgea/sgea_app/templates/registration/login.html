@@ -1,0 +1,35 @@
+{% extends "base_auth.html" %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+    <h2>Acessar o SGEA</h2>
+
+    {% if form.errors %}
+        <p>Seu login ou senha estão incorretos. Por favor, tente novamente.</p>
+    {% endif %}
+
+    {% if next %}
+        {% if user.is_authenticated %}
+            <p>Sua conta não possui acesso a esta página. Para continuar, faça login com uma conta que possua as permissões adequadas.</p>
+        {% else %}
+            <p>Por favor, faça login para ver esta página.</p>
+        {% endif %}
+    {% endif %}
+
+    <form method="post" action="{% url 'login' %}">
+        {% csrf_token %}
+        
+        {{ form.as_p }}
+
+        <button type="submit">Entrar</button>
+        
+        <input type="hidden" name="next" value="{{ next }}">
+    </form>
+
+    <p>Não tem uma conta? <a href="{% url 'cadastro_usuario' %}">Cadastre-se aqui</a>.</p>
+
+    <p>Esqueceu a senha? <a href="{% url 'password_reset' %}">Recuperar Senha</a>.</p>
+
+    <p><a href="{% url 'home' %}">Voltar para o Menu Inicial (Eventos)</a></p>
+{% endblock %}

@@ -122,4 +122,22 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-AUTH_USER_MODEL = 'sgea_app.UsuarioCustom'
+AUTH_USER_MODEL = 'sgea_app.usuario'
+
+# URL para onde o usuário será redirecionado após o login bem-sucedido.
+# Mapeia para a rota 'dashboard' que definimos nas URLs.
+LOGIN_REDIRECT_URL = 'dashboard'
+
+# URL para onde o usuário não autenticado será enviado se tentar acessar uma página restrita.
+LOGIN_URL = 'login'
+
+LOGOUT_REDIRECT_URL = 'login'
+
+# Habilita o uso de formatos de data/hora localizados nos formulários
+USE_L10N = True 
+
+# Define o formato de entrada de data que o Django deve esperar nos formulários
+DATE_INPUT_FORMATS = [
+    '%d/%m/%Y', # DD/MM/AAAA (padrão brasileiro)
+    '%Y-%m-%d', # AAAA-MM-DD (padrão ISO)
+]

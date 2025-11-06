@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}SGEA - Sistema de Gestão de Eventos Acadêmicos{% endblock %}</title>
+</head>
+<body>
+    <header>
+        <h1>SGEA</h1>
+        <nav>
+            {% if user.is_authenticated %}
+                {% if user.perfil == 'Aluno' or user.perfil == 'Professor' %}
+                    <a href="{% url 'home' %}">Início</a> 
+                    <a href="{% url 'meus_certificados' %}">Meus Certificados</a>
+                {% endif %}
+                <a href="{% url 'dashboard' %}">Dashboard</a>
+                {% if user.perfil == 'Organizador' %}
+                    <a href="{% url 'registros_auditoria' %}">Auditoria</a>
+                {% endif %}
+                <form action="{% url 'logout' %}" method="post" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" 
+                            style="background: none; border: none; padding: 0; cursor: pointer;">
+                        Sair
+                    </button>
+                </form>
+            {% else %}
+                <a href="{% url 'home' %}">Início</a>
+                <a href="{% url 'login' %}">Login</a>
+                <a href="{% url 'cadastro_usuario' %}">Cadastrar</a>
+            {% endif %}
+        </nav>
+    </header>
+
+    <main>
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %} style="list-style: none; padding: 10px; margin-bottom: 10px; border: 1px solid; {% if message.tags == 'error' %} background-color: #fdd; border-color: red; color: darkred; {% elif message.tags == 'success' %} background-color: #dfd; border-color: green; color: darkgreen; {% else %} background-color: #ffc; border-color: orange; color: darkorange; {% endif %}">
+                        {{ message }}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer>
+        <p>&copy; 2025 SGEA. Todos os direitos reservados.</p>
+    </footer>
+</body>
+</html>
