@@ -21,9 +21,14 @@ class CadastroUsuarioForm(forms.ModelForm):
         help_text="Repita a senha para confirmação."
     )
     
+    email = forms.EmailField(
+        label="E-mail de Contato",
+        help_text="Informe um e-mail válido para receber o link de confirmação."
+    )
+
     class Meta:
         model = Usuario
-        fields = ['nome', 'telefone', 'instituicao_ensino', 'login', 'perfil', 'password']
+        fields = ['nome', 'telefone', 'instituicao_ensino','email' ,'login', 'perfil', 'password']
         # Mapeamos 'password' no formulário para 'senha' no modelo customizado.
         # No seu modelo, o campo se chama 'login', mas o Django usa o campo
         # definido como USERNAME_FIELD para o nome do login.
@@ -106,9 +111,15 @@ class CadastroUsuarioForm(forms.ModelForm):
         # Configura a senha corretamente, hasheando-a
         user.set_password(password) 
         
+        # Salvando o e-mail
+        user.email = self.cleaned_data["email"]
+
         # O campo 'login' do seu modelo é o USERNAME_FIELD
         user.login = self.cleaned_data["login"]
         
+        # Usuário começa como inativo até confirmar o e-mail
+        user.is_active = False
+
         if commit:
             # Salva o usuário customizado
             user.save() 
