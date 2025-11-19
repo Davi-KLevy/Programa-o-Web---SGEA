@@ -6,6 +6,8 @@ from django.contrib.auth import logout
 from django.utils import timezone
 from .forms import * 
 from .models import *
+from django.contrib.auth import get_user_model
+from .tokens import token_ativacao
 # Importe o forms.py que criamos no passo anterior.
 
 # --- Funções Auxiliares de Permissão ---
@@ -84,20 +86,41 @@ def cadastro_usuario(request):
             novo_usuario = form.save(commit=False)
             
             # Regra de Negócio: Novo usuário começa como inativo (is_active=False)
-            # até a confirmação por e-mail (automação futura).
-            novo_usuario.is_active = True 
+            # até a confirmação por e-mail.
+            novo_usuario.is_active = False
             novo_usuario.save()
-            
-            # Lógica futura: Envio de e-mail de confirmação
-            
-            return render(request, 'cadastro_sucesso.html', {'nome': novo_usuario.nome})
+
+            from .utils import enviar_email_confirmacao
+            enviar_email_confirmacao(novo_usuario, request)
+
+            messages.success(request, "Cadastro realizado! Verifique seu e-mail para ativar sua conta.")
+            return redirect('login')
+        else:
+            messages.error(request, "Corrija os erros abaixo.")
     else:
         form = CadastroUsuarioForm()
-        
-    # O template 'cadastro_usuario.html' ainda precisa ser criado
-    return render(request, 'cadastro_usuario.html', {'form': form})
 
-# --- Rotas de Usuário Autenticado ---
+    return render(request, 'cadastro_usuario.html', {'form':form})
+
+
+Usuario = get_user_model()
+
+def confirmar_email(request, uid, token):
+    """
+    Ativa o usuário após clicar no link enviado por e-mail.
+    """
+    try:
+        usuario = Usuario.objects.get(pk=uid)
+    except Usuario.DoesNotExist:
+        return HttpResponse("Usuário inválido.", status=400)
+
+    if token_ativacao.check_token(usuario, token):
+        usuario.is_active = True
+        usuario.save()
+        return HttpResponse("E-mail confirmado com sucesso! Sua conta foi ativada.", status=200)
+    else:
+        return HttpResponse("Link inválido ou expirado.", status=400)
+
 
 @login_required
 def dashboard(request):

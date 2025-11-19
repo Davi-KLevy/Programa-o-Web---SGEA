@@ -38,6 +38,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'sgea_app',
+    'rest_framework',
+    'rest_framework.authtoken'
+
 ]
 
 MIDDLEWARE = [
@@ -122,7 +125,7 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-AUTH_USER_MODEL = 'sgea_app.usuario'
+AUTH_USER_MODEL = 'sgea_app.Usuario'
 
 # URL para onde o usuário será redirecionado após o login bem-sucedido.
 # Mapeia para a rota 'dashboard' que definimos nas URLs.
@@ -141,3 +144,33 @@ DATE_INPUT_FORMATS = [
     '%d/%m/%Y', # DD/MM/AAAA (padrão brasileiro)
     '%Y-%m-%d', # AAAA-MM-DD (padrão ISO)
 ]
+
+REST_FRAMEWORK = {
+    # Autenticação obrigatória
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+    # Configuração do Throttling
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.UserRateThrottle',
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'eventos': '20/day',
+        'inscricoes': '50/day',
+    },
+}
+
+# Conexão com o servidor de e-mail (gmail)
+
+from decouple import config
+
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = config("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER

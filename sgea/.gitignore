@@ -41,6 +41,7 @@ db.sqlite3
 /static
 
 # Arquivos de configurações sensíveis
+.env
 # NÃO envie senhas ou chaves secretas para o Git!
 # Se você usa um arquivo de ambiente ou configuração secreta:
 # settings_local.py

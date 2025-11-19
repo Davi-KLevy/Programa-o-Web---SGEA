@@ -20,6 +20,9 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
     telefone = models.CharField(max_length=50, verbose_name="Telefone")
     instituicao_ensino = models.CharField(max_length=50, verbose_name="Instituição de Ensino")
     
+    # Campos para o envio do e-mail
+    email = models.EmailField(max_length=255, unique=True, verbose_name="E-mail")
+
     # Campo usado para login. O Django cuidará do hashing da senha (campo 'password' ou 'senha' se renomeado)
     login = models.CharField(max_length=50, unique=True, verbose_name="Login (E-mail)") 
     perfil = models.CharField(max_length=50, choices=PERFIL_CHOICES, default='Aluno', verbose_name="Perfil")
@@ -32,7 +35,7 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
     objects = UsuarioManager()
     
     USERNAME_FIELD = 'login' # Campo usado como identificador de login
-    REQUIRED_FIELDS = ['nome', 'telefone', 'instituicao_ensino'] # Campos obrigatórios para criar superusuário na linha de comando
+    REQUIRED_FIELDS = ['nome', 'telefone', 'instituicao_ensino', 'email'] # Campos obrigatórios para criar superusuário na linha de comando
     
     class Meta:
         verbose_name = "Usuário"

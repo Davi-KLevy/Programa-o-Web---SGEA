@@ -1,4 +1,5 @@
 from django.urls import path
+from .views import confirmar_email
 from . import views
 
 urlpatterns = [
@@ -19,4 +20,7 @@ urlpatterns = [
     path('evento/<int:evento_id>/inscritos/', views.lista_inscritos, name='lista_inscritos'),
     path('evento/<int:evento_id>/emitir_certificados/', views.emitir_certificados, name='emitir_certificados'),
     path('auditoria/', views.registros_auditoria, name='registros_auditoria'),
+
+    # Rota da confirmação por e-mail
+    path("confirmar-email/<int:uid>/<str:token>/", confirmar_email, name="confirmar_email"),
 ]
