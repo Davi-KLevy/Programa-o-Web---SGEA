@@ -1,26 +1,32 @@
+"""
+sgea_app/urls.py - URLs da aplicação
+"""
+
 from django.urls import path
-from .views import confirmar_email
 from . import views
 
-urlpatterns = [
-    # Rotas Públicas (Sem necessidade de login)
-    path('', views.lista_eventos, name='home'),             # Lista de eventos (Página inicial)
-    path('evento/<int:evento_id>/', views.detalhe_evento, name='detalhe_evento'),
-    path('cadastro/', views.cadastro_usuario, name='cadastro_usuario'),
-    
-    # Rotas de Usuário Autenticado (Aluno/Professor/Organizador)
-    path('dashboard/', views.dashboard, name='dashboard'), # Página inicial após login
-    path('inscrever/<int:evento_id>/', views.inscrever_evento, name='inscrever_evento'),
-    path('evento/<int:evento_id>/desinscrever/', views.desinscrever_evento, name='desinscrever_evento'),
-    path('meus_certificados/', views.meus_certificados, name='meus_certificados'),
-    
-    # Rotas de Organizador (Requer perfil 'Organizador')
-    path('eventos/novo/', views.criar_evento, name='criar_evento'),
-    path('eventos/editar/<int:evento_id>/', views.editar_evento, name='editar_evento'),
-    path('evento/<int:evento_id>/inscritos/', views.lista_inscritos, name='lista_inscritos'),
-    path('evento/<int:evento_id>/emitir_certificados/', views.emitir_certificados, name='emitir_certificados'),
-    path('auditoria/', views.registros_auditoria, name='registros_auditoria'),
+app_name = 'sgea_app'
 
-    # Rota da confirmação por e-mail
-    path("confirmar-email/<int:uid>/<str:token>/", confirmar_email, name="confirmar_email"),
+urlpatterns = [
+    # Home
+    path('', views.home, name='home'),
+    path('dashboard/', views.dashboard, name='dashboard'),
+    
+    # Usuários
+    path('cadastro/', views.usuario_cadastro, name='usuario_cadastro'),
+    path('login/', views.usuario_login, name='login'),
+    path('logout/', views.usuario_logout, name='logout'),
+    path('perfil/', views.usuario_perfil, name='perfil'),
+    
+    # Eventos
+    path('eventos/', views.eventos_lista, name='eventos_lista'),
+    path('eventos/cadastro/', views.evento_cadastro, name='evento_cadastro'),
+    path('eventos/<int:evento_id>/', views.evento_detalhes, name='evento_detalhes'),
+    
+    # Inscrições
+    path('eventos/<int:evento_id>/inscrever/', views.inscricao_criar, name='inscricao_criar'),
+    path('minhas-inscricoes/', views.minhas_inscricoes, name='minhas_inscricoes'),
+    
+    # Auditoria
+    path('auditoria/', views.auditoria_logs, name='auditoria_logs'),
 ]

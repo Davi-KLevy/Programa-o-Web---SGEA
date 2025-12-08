@@ -1,0 +1,171 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Cadastro - UniEvents{% endblock %}
+
+{% block page_title %}Criar Conta{% endblock %}
+{% block page_subtitle %}Junte-se à comunidade UniEvents{% endblock %}
+
+{% block content %}
+<div style="max-width: 600px; margin: 0 auto;">
+    <div class="card fade-in">
+        <div class="card-header">
+            <i class="fas fa-user-plus"></i>
+            <h3>Cadastro de Novo Usuário</h3>
+        </div>
+        
+        <div class="card-body">
+            <form id="cadastroForm" method="POST" novalidate>
+                {% csrf_token %}
+                
+                <!-- Nome Completo -->
+                <div class="form-group">
+                    <label class="form-label" for="nome">
+                        <i class="fas fa-user"></i> Nome Completo *
+                    </label>
+                    <input type="text" 
+                           class="form-control" 
+                           id="nome" 
+                           name="nome" 
+                           placeholder="Ex: João Silva"
+                           required>
+                </div>
+                
+                <!-- Email -->
+                <div class="form-group">
+                    <label class="form-label" for="email">
+                        <i class="fas fa-envelope"></i> Email *
+                    </label>
+                    <input type="email" 
+                           class="form-control" 
+                           id="email" 
+                           name="email" 
+                           placeholder="seu.email@exemplo.com"
+                           required>
+                    <div class="form-text">Use um email válido para confirmação da conta</div>
+                </div>
+                
+                <!-- Telefone -->
+                <div class="form-group">
+                    <label class="form-label" for="telefone">
+                        <i class="fas fa-phone"></i> Telefone *
+                    </label>
+                    <input type="tel" 
+                           class="form-control" 
+                           id="telefone" 
+                           name="telefone" 
+                           placeholder="(00) 00000-0000"
+                           required>
+                </div>
+                
+                <!-- Instituição -->
+                <div class="form-group">
+                    <label class="form-label" for="instituicao">
+                        <i class="fas fa-university"></i> Instituição de Ensino *
+                    </label>
+                    <input type="text" 
+                           class="form-control" 
+                           id="instituicao" 
+                           name="instituicao" 
+                           placeholder="Ex: Universidade Federal de..."
+                           required>
+                </div>
+                
+                <!-- Perfil -->
+                <div class="form-group">
+                    <label class="form-label" for="perfil">
+                        <i class="fas fa-id-badge"></i> Perfil *
+                    </label>
+                    <select class="form-control" id="perfil" name="perfil" required>
+                        <option value="">Selecione seu perfil...</option>
+                        <option value="Aluno">Aluno</option>
+                        <option value="Professor">Professor</option>
+                    </select>
+                    <div class="form-text">Organizadores são cadastrados apenas pela administração</div>
+                </div>
+                
+                <!-- Senha -->
+                <div class="form-group">
+                    <label class="form-label" for="senha">
+                        <i class="fas fa-lock"></i> Senha *
+                    </label>
+                    <input type="password" 
+                           class="form-control" 
+                           id="senha" 
+                           name="senha" 
+                           placeholder="Crie uma senha forte"
+                           required>
+                    <div id="password-strength"></div>
+                    <div class="form-text">
+                        <i class="fas fa-info-circle"></i> 
+                        Mínimo 8 caracteres com letras, números e caracteres especiais
+                    </div>
+                </div>
+                
+                <!-- Confirmação de Senha -->
+                <div class="form-group">
+                    <label class="form-label" for="confirmacao_senha">
+                        <i class="fas fa-lock"></i> Confirmar Senha *
+                    </label>
+                    <input type="password" 
+                           class="form-control" 
+                           id="confirmacao_senha" 
+                           name="confirmacao_senha" 
+                           placeholder="Digite a senha novamente"
+                           required>
+                </div>
+                
+                <!-- Botões -->
+                <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                    <a href="{% url 'sgea_app:login' %}" class="btn btn-outline" style="flex: 1;">
+                        <i class="fas fa-arrow-left"></i> Voltar
+                    </a>
+                    <button type="submit" class="btn btn-primary" style="flex: 2;">
+                        <i class="fas fa-user-plus"></i> Criar Conta
+                    </button>
+                </div>
+                
+                <!-- Link para Login -->
+                <div style="text-align: center; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color);">
+                    <p style="color: var(--text-secondary); margin-bottom: 0.5rem;">
+                        Já tem uma conta?
+                    </p>
+                    <a href="{% url 'sgea_app:login' %}" style="color: var(--primary-blue); font-weight: 600; text-decoration: none;">
+                        Fazer Login <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Validação do formulário
+    const form = document.getElementById('cadastroForm');
+    const senhaInput = document.getElementById('senha');
+    const strengthDiv = document.getElementById('password-strength');
+    
+    // Mostrar força da senha
+    if (senhaInput && strengthDiv) {
+        senhaInput.addEventListener('input', function() {
+            window.UniEvents.validatePassword(this.value);
+        });
+    }
+    
+    // Validar no submit
+    form.addEventListener('submit', function(e) {
+        if (!window.UniEvents.validateForm(this)) {
+            e.preventDefault();
+            
+            // Scroll para o primeiro erro
+            const firstError = this.querySelector('.is-invalid');
+            if (firstError) {
+                firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                firstError.focus();
+            }
+        }
+    });
+</script>
+{% endblock %}

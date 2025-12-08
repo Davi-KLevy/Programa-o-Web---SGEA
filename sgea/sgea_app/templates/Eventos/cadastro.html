@@ -1,0 +1,213 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Cadastrar Evento - UniEvents{% endblock %}
+
+{% block page_title %}Criar Novo Evento{% endblock %}
+{% block page_subtitle %}Preencha as informações do evento acadêmico{% endblock %}
+
+{% block content %}
+<div style="max-width: 900px; margin: 0 auto;">
+    <div class="card fade-in">
+        <div class="card-header">
+            <i class="fas fa-calendar-plus"></i>
+            <h3>Cadastro de Evento</h3>
+        </div>
+        
+        <div class="card-body">
+            <form id="eventoForm" method="POST" enctype="multipart/form-data" novalidate>
+                {% csrf_token %}
+                
+                <!-- Tipo e Nome do Evento -->
+                <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label class="form-label" for="tipo">
+                            <i class="fas fa-tag"></i> Tipo de Evento *
+                        </label>
+                        <select class="form-control" id="tipo" name="tipo" required>
+                            <option value="">Selecione...</option>
+                            <option value="seminario">Seminário</option>
+                            <option value="palestra">Palestra</option>
+                            <option value="minicurso">Minicurso</option>
+                            <option value="workshop">Workshop</option>
+                            <option value="semana_academica">Semana Acadêmica</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label class="form-label" for="nome">
+                            <i class="fas fa-heading"></i> Nome do Evento *
+                        </label>
+                        <input type="text" 
+                               class="form-control" 
+                               id="nome" 
+                               name="nome" 
+                               placeholder="Ex: Semana da Computação 2024"
+                               required>
+                    </div>
+                </div>
+                
+                <!-- Datas -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                    <div class="form-group">
+                        <label class="form-label" for="data_inicial">
+                            <i class="fas fa-calendar-day"></i> Data de Início *
+                        </label>
+                        <input type="datetime-local" 
+                               class="form-control" 
+                               id="data_inicial" 
+                               name="data_inicial" 
+                               required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="data_final">
+                            <i class="fas fa-calendar-check"></i> Data de Término *
+                        </label>
+                        <input type="datetime-local" 
+                               class="form-control" 
+                               id="data_final" 
+                               name="data_final" 
+                               required>
+                    </div>
+                </div>
+                
+                <!-- Local e Vagas -->
+                <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem;">
+                    <div class="form-group">
+                        <label class="form-label" for="local">
+                            <i class="fas fa-map-marker-alt"></i> Local *
+                        </label>
+                        <input type="text" 
+                               class="form-control" 
+                               id="local" 
+                               name="local" 
+                               placeholder="Ex: Auditório Principal - Campus Central"
+                               required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="quantidade_participantes">
+                            <i class="fas fa-users"></i> Vagas *
+                        </label>
+                        <input type="number" 
+                               class="form-control" 
+                               id="quantidade_participantes" 
+                               name="quantidade_participantes" 
+                               min="1" 
+                               max="10000" 
+                               placeholder="100"
+                               required>
+                    </div>
+                </div>
+                
+                <!-- Banner do Evento -->
+                <div class="form-group">
+                    <label class="form-label" for="banner">
+                        <i class="fas fa-image"></i> Banner do Evento
+                    </label>
+                    <div class="file-upload" onclick="document.getElementById('banner').click()">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <p style="margin: 1rem 0 0.5rem; font-weight: 600;">Clique para fazer upload</p>
+                        <small style="color: var(--text-secondary);">
+                            JPG, PNG, GIF ou WebP (máx. 5MB)
+                        </small>
+                    </div>
+                    <input type="file" 
+                           id="banner" 
+                           name="banner" 
+                           accept="image/*" 
+                           style="display: none;" 
+                           data-preview="banner-preview">
+                    <div id="banner-preview" style="margin-top: 1rem;"></div>
+                </div>
+                
+                <!-- Descrição -->
+                <div class="form-group">
+                    <label class="form-label" for="descricao">
+                        <i class="fas fa-align-left"></i> Descrição do Evento
+                    </label>
+                    <textarea class="form-control" 
+                              id="descricao" 
+                              name="descricao" 
+                              rows="5" 
+                              placeholder="Descreva os detalhes do evento, programação, palestrantes, etc..."
+                              style="resize: vertical;"></textarea>
+                    <div class="form-text">
+                        <i class="fas fa-info-circle"></i> 
+                        Forneça informações detalhadas para atrair participantes
+                    </div>
+                </div>
+                
+                <!-- Botões -->
+                <div style="display: flex; gap: 1rem; margin-top: 2rem; padding-top: 2rem; border-top: 2px solid var(--border-color);">
+                    <a href="{% url 'sgea_app:dashboard' %}" class="btn btn-outline" style="flex: 1;">
+                        <i class="fas fa-times"></i> Cancelar
+                    </a>
+                    <button type="submit" class="btn btn-primary" style="flex: 2;">
+                        <i class="fas fa-check"></i> Cadastrar Evento
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Card de Ajuda -->
+    <div class="card fade-in" style="margin-top: 1.5rem; animation-delay: 0.2s;">
+        <div class="card-body">
+            <h4 style="margin-bottom: 1rem;">
+                <i class="fas fa-lightbulb" style="color: var(--warning);"></i> 
+                Dicas para um Evento de Sucesso
+            </h4>
+            <ul style="color: var(--text-secondary); line-height: 2;">
+                <li>Use um <strong>banner atrativo</strong> que represente bem o tema do evento</li>
+                <li>Escreva uma <strong>descrição clara</strong> com programação e benefícios</li>
+                <li>Defina o <strong>número de vagas</strong> adequado ao espaço disponível</li>
+                <li>Certifique-se de que as <strong>datas e horários</strong> não conflitam com outros eventos</li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const form = document.getElementById('eventoForm');
+    
+    // Validação no submit
+    form.addEventListener('submit', function(e) {
+        if (!window.UniEvents.validateForm(this)) {
+            e.preventDefault();
+            
+            const alertDiv = document.createElement('div');
+            alertDiv.className = 'alert alert-danger';
+            alertDiv.innerHTML = '<i class="fas fa-exclamation-circle"></i><span>Por favor, corrija os erros antes de continuar.</span>';
+            this.insertBefore(alertDiv, this.firstChild);
+            
+            setTimeout(() => alertDiv.remove(), 5000);
+            
+            // Scroll para o primeiro erro
+            const firstError = this.querySelector('.is-invalid');
+            if (firstError) {
+                firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+    });
+    
+    // Validar data final maior que inicial
+    const dataInicial = document.getElementById('data_inicial');
+    const dataFinal = document.getElementById('data_final');
+    
+    dataFinal.addEventListener('change', function() {
+        if (dataInicial.value && this.value) {
+            if (new Date(this.value) <= new Date(dataInicial.value)) {
+                this.setCustomValidity('A data final deve ser posterior à data inicial');
+                this.classList.add('is-invalid');
+            } else {
+                this.setCustomValidity('');
+                this.classList.remove('is-invalid');
+            }
+        }
+    });
+</script>
+{% endblock %}

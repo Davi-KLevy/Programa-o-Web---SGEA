@@ -1,0 +1,244 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Meu Perfil - UniEvents{% endblock %}
+
+{% block page_title %}Meu Perfil{% endblock %}
+{% block page_subtitle %}Gerencie suas informações pessoais{% endblock %}
+
+{% block content %}
+<div class="fade-in">
+    <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 2rem;">
+        <!-- Sidebar do Perfil -->
+        <div>
+            <div class="card">
+                <div class="card-body" style="text-align: center;">
+                    <!-- Avatar -->
+                    <div style="width: 120px; height: 120px; margin: 0 auto 1.5rem; background: linear-gradient(135deg, var(--primary-blue), var(--primary-purple)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 3rem; color: white; font-weight: 700;">
+                        {{ user.nome|first|upper }}
+                    </div>
+                    
+                    <h3 style="margin-bottom: 0.5rem;">{{ user.nome }}</h3>
+                    <div class="badge badge-primary" style="margin-bottom: 1rem;">
+                        <i class="fas fa-id-badge"></i>
+                        {{ user.perfil }}
+                    </div>
+                    
+                    <div style="padding: 1rem; background: var(--bg-secondary); border-radius: 12px; margin-top: 1.5rem;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+                            <i class="fas fa-envelope" style="color: var(--primary-blue);"></i>
+                            <span style="font-size: 0.875rem; color: var(--text-secondary);">{{ user.email }}</span>
+                        </div>
+                        
+                        {% if user.telefone %}
+                        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+                            <i class="fas fa-phone" style="color: var(--primary-blue);"></i>
+                            <span style="font-size: 0.875rem; color: var(--text-secondary);">{{ user.telefone }}</span>
+                        </div>
+                        {% endif %}
+                        
+                        {% if user.instituicao %}
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="fas fa-university" style="color: var(--primary-blue);"></i>
+                            <span style="font-size: 0.875rem; color: var(--text-secondary);">{{ user.instituicao }}</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <button class="btn btn-outline btn-block" style="margin-top: 1.5rem;">
+                        <i class="fas fa-camera"></i> Alterar Foto
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Estatísticas -->
+            <div class="card" style="margin-top: 1.5rem;">
+                <div class="card-body">
+                    <h4 style="margin-bottom: 1rem;">
+                        <i class="fas fa-chart-line"></i> Estatísticas
+                    </h4>
+                    
+                    <div style="display: flex; justify-content: space-between; padding: 1rem; background: var(--bg-secondary); border-radius: 8px; margin-bottom: 0.75rem;">
+                        <span style="color: var(--text-secondary);">Eventos Participados</span>
+                        <strong style="color: var(--primary-blue);">0</strong>
+                    </div>
+                    
+                    <div style="display: flex; justify-content: space-between; padding: 1rem; background: var(--bg-secondary); border-radius: 8px; margin-bottom: 0.75rem;">
+                        <span style="color: var(--text-secondary);">Certificados</span>
+                        <strong style="color: var(--accent-cyan);">0</strong>
+                    </div>
+                    
+                    <div style="display: flex; justify-content: space-between; padding: 1rem; background: var(--bg-secondary); border-radius: 8px;">
+                        <span style="color: var(--text-secondary);">Inscrições Ativas</span>
+                        <strong style="color: var(--success);">0</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Conteúdo Principal -->
+        <div>
+            <!-- Informações Pessoais -->
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-user-edit"></i>
+                    <h3>Informações Pessoais</h3>
+                </div>
+                
+                <div class="card-body">
+                    <form method="POST">
+                        {% csrf_token %}
+                        
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                            <!-- Nome -->
+                            <div class="form-group">
+                                <label class="form-label" for="nome">
+                                    <i class="fas fa-user"></i> Nome Completo
+                                </label>
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="nome" 
+                                       name="nome" 
+                                       value="{{ user.nome }}"
+                                       required>
+                            </div>
+                            
+                            <!-- Email -->
+                            <div class="form-group">
+                                <label class="form-label" for="email">
+                                    <i class="fas fa-envelope"></i> Email
+                                </label>
+                                <input type="email" 
+                                       class="form-control" 
+                                       id="email" 
+                                       name="email" 
+                                       value="{{ user.email }}"
+                                       required>
+                            </div>
+                            
+                            <!-- Telefone -->
+                            <div class="form-group">
+                                <label class="form-label" for="telefone">
+                                    <i class="fas fa-phone"></i> Telefone
+                                </label>
+                                <input type="tel" 
+                                       class="form-control" 
+                                       id="telefone" 
+                                       name="telefone" 
+                                       value="{{ user.telefone }}">
+                            </div>
+                            
+                            <!-- Instituição -->
+                            <div class="form-group">
+                                <label class="form-label" for="instituicao">
+                                    <i class="fas fa-university"></i> Instituição
+                                </label>
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="instituicao" 
+                                       name="instituicao" 
+                                       value="{{ user.instituicao }}">
+                            </div>
+                        </div>
+                        
+                        <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Salvar Alterações
+                            </button>
+                            <button type="button" class="btn btn-outline">
+                                <i class="fas fa-times"></i> Cancelar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Alterar Senha -->
+            <div class="card" style="margin-top: 1.5rem;">
+                <div class="card-header">
+                    <i class="fas fa-lock"></i>
+                    <h3>Alterar Senha</h3>
+                </div>
+                
+                <div class="card-body">
+                    <form method="POST" action="{% url 'sgea_app:perfil' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="change_password">
+                        
+                        <!-- Senha Atual -->
+                        <div class="form-group">
+                            <label class="form-label" for="senha_atual">
+                                <i class="fas fa-key"></i> Senha Atual
+                            </label>
+                            <input type="password" 
+                                   class="form-control" 
+                                   id="senha_atual" 
+                                   name="senha_atual" 
+                                   placeholder="Digite sua senha atual"
+                                   required>
+                        </div>
+                        
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                            <!-- Nova Senha -->
+                            <div class="form-group">
+                                <label class="form-label" for="nova_senha">
+                                    <i class="fas fa-lock"></i> Nova Senha
+                                </label>
+                                <input type="password" 
+                                       class="form-control" 
+                                       id="nova_senha" 
+                                       name="nova_senha" 
+                                       placeholder="Digite a nova senha"
+                                       required>
+                                <div id="password-strength"></div>
+                            </div>
+                            
+                            <!-- Confirmar Nova Senha -->
+                            <div class="form-group">
+                                <label class="form-label" for="confirmar_senha">
+                                    <i class="fas fa-lock"></i> Confirmar Nova Senha
+                                </label>
+                                <input type="password" 
+                                       class="form-control" 
+                                       id="confirmar_senha" 
+                                       name="confirmar_senha" 
+                                       placeholder="Confirme a nova senha"
+                                       required>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary" style="margin-top: 1rem;">
+                            <i class="fas fa-shield-alt"></i> Alterar Senha
+                        </button>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Zona de Perigo -->
+            <div class="card" style="margin-top: 1.5rem; border-color: var(--danger);">
+                <div class="card-body">
+                    <h4 style="color: var(--danger); margin-bottom: 1rem;">
+                        <i class="fas fa-exclamation-triangle"></i> Zona de Perigo
+                    </h4>
+                    <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+                        Uma vez que você exclua sua conta, não há como voltar atrás. Por favor, tenha certeza.
+                    </p>
+                    <button class="btn btn-danger">
+                        <i class="fas fa-trash-alt"></i> Excluir Minha Conta
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_css %}
+<style>
+    @media (max-width: 968px) {
+        .content > div > div {
+            grid-template-columns: 1fr !important;
+        }
+    }
+</style>
+{% endblock %}
+{% endblock %}

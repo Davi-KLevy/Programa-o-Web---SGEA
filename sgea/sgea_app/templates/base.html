@@ -1,54 +1,168 @@
+{% load static %}
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}SGEA - Sistema de Gestão de Eventos Acadêmicos{% endblock %}</title>
+    <title>{% block title %}UniEvents{% endblock %}</title>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- CSS UniEvents -->
+    <link rel="stylesheet" href="{% static 'css/sgea-style.css' %}">
+    
+    {% block extra_css %}{% endblock %}
 </head>
 <body>
-    <header>
-        <h1>SGEA</h1>
-        <nav>
-            {% if user.is_authenticated %}
-                {% if user.perfil == 'Aluno' or user.perfil == 'Professor' %}
-                    <a href="{% url 'home' %}">Início</a> 
-                    <a href="{% url 'meus_certificados' %}">Meus Certificados</a>
+    <div class="app-container">
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <!-- Header da Sidebar -->
+            <div class="sidebar-header">
+                <img src="{% static 'img/logo.png' %}" alt="UniEvents Logo" class="sidebar-logo">
+                <div class="sidebar-title">
+                    <span>UniEvents</span>
+                </div>
+            </div>
+            
+            <!-- Navegação -->
+            <nav class="sidebar-nav">
+                {% if user.is_authenticated %}
+                    <!-- Menu Principal -->
+                    <div class="nav-section">
+                        <div class="nav-section-title">Menu Principal</div>
+                        
+                        <a href="{% url 'sgea_app:dashboard' %}" class="nav-item {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+                            <i class="fas fa-home"></i>
+                            <span>Dashboard</span>
+                        </a>
+                        
+                        <a href="{% url 'sgea_app:eventos_lista' %}" class="nav-item {% if 'eventos' in request.path %}active{% endif %}">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>Eventos</span>
+                        </a>
+                        
+                        {% if user.perfil == 'Organizador' %}
+                        <a href="{% url 'sgea_app:evento_cadastro' %}" class="nav-item {% if request.resolver_match.url_name == 'evento_cadastro' %}active{% endif %}">
+                            <i class="fas fa-plus-circle"></i>
+                            <span>Criar Evento</span>
+                        </a>
+                        {% endif %}
+                        
+                        {% if user.perfil in 'Aluno,Professor' %}
+                        <a href="{% url 'sgea_app:minhas_inscricoes' %}" class="nav-item {% if request.resolver_match.url_name == 'minhas_inscricoes' %}active{% endif %}">
+                            <i class="fas fa-clipboard-list"></i>
+                            <span>Minhas Inscrições</span>
+                        </a>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Gestão (Organizador) -->
+                    {% if user.perfil == 'Organizador' %}
+                    <div class="nav-section">
+                        <div class="nav-section-title">Gestão</div>
+                        
+                        <a href="{% url 'sgea_app:auditoria_logs' %}" class="nav-item {% if request.resolver_match.url_name == 'auditoria_logs' %}active{% endif %}">
+                            <i class="fas fa-shield-alt"></i>
+                            <span>Auditoria</span>
+                        </a>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Minha Conta -->
+                    <div class="nav-section">
+                        <div class="nav-section-title">Minha Conta</div>
+                        
+                        <a href="{% url 'sgea_app:perfil' %}" class="nav-item {% if request.resolver_match.url_name == 'perfil' %}active{% endif %}">
+                            <i class="fas fa-user-circle"></i>
+                            <span>Meu Perfil</span>
+                        </a>
+                        
+                        <a href="{% url 'sgea_app:logout' %}" class="nav-item">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Sair</span>
+                        </a>
+                    </div>
+                {% else %}
+                    <!-- Menu para Visitantes -->
+                    <div class="nav-section">
+                        <div class="nav-section-title">Bem-vindo</div>
+                        
+                        <a href="{% url 'sgea_app:home' %}" class="nav-item {% if request.resolver_match.url_name == 'home' %}active{% endif %}">
+                            <i class="fas fa-home"></i>
+                            <span>Início</span>
+                        </a>
+                        
+                        <a href="{% url 'sgea_app:eventos_lista' %}" class="nav-item {% if 'eventos' in request.path %}active{% endif %}">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>Ver Eventos</span>
+                        </a>
+                        
+                        <a href="{% url 'sgea_app:login' %}" class="nav-item {% if request.resolver_match.url_name == 'login' %}active{% endif %}">
+                            <i class="fas fa-sign-in-alt"></i>
+                            <span>Entrar</span>
+                        </a>
+                        
+                        <a href="{% url 'sgea_app:usuario_cadastro' %}" class="nav-item {% if request.resolver_match.url_name == 'usuario_cadastro' %}active{% endif %}">
+                            <i class="fas fa-user-plus"></i>
+                            <span>Cadastrar</span>
+                        </a>
+                    </div>
                 {% endif %}
-                <a href="{% url 'dashboard' %}">Dashboard</a>
-                {% if user.perfil == 'Organizador' %}
-                    <a href="{% url 'registros_auditoria' %}">Auditoria</a>
-                {% endif %}
-                <form action="{% url 'logout' %}" method="post" style="display: inline;">
-                    {% csrf_token %}
-                    <button type="submit" 
-                            style="background: none; border: none; padding: 0; cursor: pointer;">
-                        Sair
+            </nav>
+        </aside>
+        
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+            <!-- TOPBAR -->
+            <header class="topbar">
+                <div class="topbar-left">
+                    <h1>{% block page_title %}UniEvents{% endblock %}</h1>
+                    <p class="topbar-subtitle">{% block page_subtitle %}Sistema de Gestão de Eventos Acadêmicos{% endblock %}</p>
+                </div>
+                
+                <div class="topbar-right">
+                    <!-- Theme Toggle -->
+                    <button class="theme-toggle" id="theme-toggle" title="Alternar tema">
+                        <i class="fas fa-moon"></i>
                     </button>
-                </form>
-            {% else %}
-                <a href="{% url 'home' %}">Início</a>
-                <a href="{% url 'login' %}">Login</a>
-                <a href="{% url 'cadastro_usuario' %}">Cadastrar</a>
-            {% endif %}
-        </nav>
-    </header>
-
-    <main>
-        {% if messages %}
-            <ul class="messages">
-                {% for message in messages %}
-                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %} style="list-style: none; padding: 10px; margin-bottom: 10px; border: 1px solid; {% if message.tags == 'error' %} background-color: #fdd; border-color: red; color: darkred; {% elif message.tags == 'success' %} background-color: #dfd; border-color: green; color: darkgreen; {% else %} background-color: #ffc; border-color: orange; color: darkorange; {% endif %}">
-                        {{ message }}
-                    </li>
-                {% endfor %}
-            </ul>
-        {% endif %}
-        {% block content %}
-        {% endblock %}
-    </main>
-
-    <footer>
-        <p>&copy; 2025 SGEA. Todos os direitos reservados.</p>
-    </footer>
+                    
+                    <!-- User Info -->
+                    {% if user.is_authenticated %}
+                    <div class="user-menu">
+                        <div class="user-avatar">
+                            {{ user.nome|first|upper }}
+                        </div>
+                        <div style="text-align: left;">
+                            <div style="font-weight: 600; font-size: 0.875rem;">{{ user.nome }}</div>
+                            <div style="font-size: 0.75rem; color: var(--text-secondary);">{{ user.perfil }}</div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </header>
+            
+            <!-- CONTENT -->
+            <div class="content">
+                <!-- Messages/Alerts -->
+                {% if messages %}
+                    {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} fade-in">
+                        <i class="fas fa-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' or message.tags == 'danger' %}exclamation-circle{% else %}info-circle{% endif %}"></i>
+                        <span>{{ message }}</span>
+                    </div>
+                    {% endfor %}
+                {% endif %}
+                
+                <!-- Page Content -->
+                {% block content %}{% endblock %}
+            </div>
+        </main>
+    </div>
+    
+    <!-- Scripts -->
+    <script src="{% static 'js/sgea-validations.js' %}"></script>
+    {% block extra_js %}{% endblock %}
 </body>
 </html>

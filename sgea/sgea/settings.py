@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -39,8 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'sgea_app',
     'rest_framework',
-    'rest_framework.authtoken'
-
+    'rest_framework.authtoken',
 ]
 
 MIDDLEWARE = [
@@ -58,13 +58,18 @@ ROOT_URLCONF = 'sgea.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            BASE_DIR / 'sgea_app' / 'templates',  # Diretório principal de templates
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+                'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.media',  # Para usar {{ MEDIA_URL }}
+                'django.template.context_processors.static',  # Para usar {{ STATIC_URL }}
             ],
         },
     },
@@ -93,6 +98,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'OPTIONS': {
+            'min_length': 8,  # Mínimo 8 caracteres conforme requisito
+        }
     },
     {
         'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
@@ -106,11 +114,14 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+# Configuração para Português do Brasil
+LANGUAGE_CODE = 'pt-br'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Sao_Paulo'
 
 USE_I18N = True
+
+USE_L10N = True
 
 USE_TZ = True
 
@@ -118,59 +129,223 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+
+# Diretórios onde o Django procura arquivos estáticos durante desenvolvimento
+STATICFILES_DIRS = [
+    BASE_DIR / 'sgea_app' / 'static',
+]
+
+# Diretório onde os arquivos estáticos serão coletados para produção
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+
+# Media files (Uploads - Banners de eventos, etc)
+# https://docs.djangoproject.com/en/5.2/topics/files/
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
+# Configurações de upload de arquivos
+FILE_UPLOAD_MAX_MEMORY_SIZE = 5242880  # 5MB em bytes
+DATA_UPLOAD_MAX_MEMORY_SIZE = 5242880  # 5MB em bytes
+
+# Formatos de arquivo aceitos para banners (validação adicional no front-end)
+ALLOWED_IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.gif', '.webp']
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# Modelo de usuário customizado
 AUTH_USER_MODEL = 'sgea_app.Usuario'
 
-# URL para onde o usuário será redirecionado após o login bem-sucedido.
-# Mapeia para a rota 'dashboard' que definimos nas URLs.
+# URLs de redirecionamento
 LOGIN_REDIRECT_URL = 'dashboard'
-
-# URL para onde o usuário não autenticado será enviado se tentar acessar uma página restrita.
 LOGIN_URL = 'login'
-
 LOGOUT_REDIRECT_URL = 'login'
 
-# Habilita o uso de formatos de data/hora localizados nos formulários
-USE_L10N = True 
-
-# Define o formato de entrada de data que o Django deve esperar nos formulários
+# Formatos de data e hora
 DATE_INPUT_FORMATS = [
-    '%d/%m/%Y', # DD/MM/AAAA (padrão brasileiro)
-    '%Y-%m-%d', # AAAA-MM-DD (padrão ISO)
+    '%d/%m/%Y',     # DD/MM/AAAA (padrão brasileiro)
+    '%Y-%m-%d',     # AAAA-MM-DD (padrão ISO)
+    '%d-%m-%Y',     # DD-MM-AAAA
 ]
 
+DATETIME_INPUT_FORMATS = [
+    '%d/%m/%Y %H:%M',     # DD/MM/AAAA HH:MM
+    '%Y-%m-%d %H:%M',     # AAAA-MM-DD HH:MM
+    '%Y-%m-%dT%H:%M',     # Formato datetime-local do HTML5
+]
+
+# Formato de exibição de data e hora
+DATE_FORMAT = 'd/m/Y'
+DATETIME_FORMAT = 'd/m/Y H:i'
+SHORT_DATE_FORMAT = 'd/m/Y'
+
+
+# REST Framework Configuration
+# https://www.django-rest-framework.org/
+
 REST_FRAMEWORK = {
-    # Autenticação obrigatória
+    # Autenticação obrigatória via Token
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',  # Para o browsable API
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
     ],
-    # Configuração do Throttling
+    # Configuração do Throttling (limite de requisições)
     'DEFAULT_THROTTLE_CLASSES': [
         'rest_framework.throttling.UserRateThrottle',
     ],
     'DEFAULT_THROTTLE_RATES': {
-        'eventos': '20/day',
-        'inscricoes': '50/day',
+        'user': '100/day',      # Limite geral por usuário
+        'eventos': '20/day',    # Consulta de eventos
+        'inscricoes': '50/day', # Inscrições de participantes
+    },
+    # Paginação padrão
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10,
+    # Formato de resposta padrão
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
+    ],
+    # Parser de requisições
+    'DEFAULT_PARSER_CLASSES': [
+        'rest_framework.parsers.JSONParser',
+        'rest_framework.parsers.FormParser',
+        'rest_framework.parsers.MultiPartParser',
+    ],
+}
+
+
+# Email Configuration
+# Configuração para envio de emails (Gmail)
+
+try:
+    from decouple import config
+    
+    EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+    EMAIL_HOST = "smtp.gmail.com"
+    EMAIL_PORT = 587
+    EMAIL_USE_TLS = True
+    EMAIL_HOST_USER = config("EMAIL_HOST_USER")
+    EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
+    DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+    
+except ImportError:
+    # Fallback para console backend durante desenvolvimento
+    # (mostra os emails no console ao invés de enviar)
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+    print("AVISO: python-decouple não instalado. Emails serão exibidos no console.")
+
+
+# Messages Framework
+# https://docs.djangoproject.com/en/5.2/ref/contrib/messages/
+
+from django.contrib.messages import constants as messages
+
+MESSAGE_TAGS = {
+    messages.DEBUG: 'info',
+    messages.INFO: 'info',
+    messages.SUCCESS: 'success',
+    messages.WARNING: 'warning',
+    messages.ERROR: 'danger',
+}
+
+
+# Security Settings
+# Configurações de segurança para produção (ajustar quando for para produção)
+
+if not DEBUG:
+    # HTTPS
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    
+    # HSTS
+    SECURE_HSTS_SECONDS = 31536000
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    
+    # Content Security
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    SECURE_BROWSER_XSS_FILTER = True
+    X_FRAME_OPTIONS = 'DENY'
+
+
+# Logging Configuration
+# Configuração de logs para auditoria e debugging
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'file': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': BASE_DIR / 'logs' / 'sgea.log',
+            'formatter': 'verbose',
+        },
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file', 'console'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+        'sgea_app': {
+            'handlers': ['file', 'console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
     },
 }
 
-# Conexão com o servidor de e-mail (gmail)
+# Criar diretório de logs se não existir
+LOGS_DIR = BASE_DIR / 'logs'
+if not LOGS_DIR.exists():
+    LOGS_DIR.mkdir(parents=True, exist_ok=True)
 
-from decouple import config
 
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = "smtp.gmail.com"
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = config("EMAIL_HOST_USER")
-EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
-DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+# Custom Settings for SGEA
+# Configurações específicas do sistema SGEA
+
+# Tipos de eventos permitidos
+TIPOS_EVENTO = [
+    ('seminario', 'Seminário'),
+    ('palestra', 'Palestra'),
+    ('minicurso', 'Minicurso'),
+    ('workshop', 'Workshop'),
+    ('semana_academica', 'Semana Acadêmica'),
+]
+
+# Perfis de usuário
+PERFIS_USUARIO = [
+    ('aluno', 'Aluno'),
+    ('professor', 'Professor'),
+    ('organizador', 'Organizador'),
+]
+
+# Configurações de certificados
+CERTIFICADO_TITULO = 'Sistema de Gestão de Eventos Acadêmicos'
+CERTIFICADO_ASSINATURA = 'Coordenação SGEA'
+
+# Tempo de expiração do token de confirmação de email (em horas)
+EMAIL_CONFIRMATION_TIMEOUT = 24

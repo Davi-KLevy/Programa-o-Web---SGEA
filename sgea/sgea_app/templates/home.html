@@ -1,0 +1,178 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}UniEvents - Sistema de Gestão de Eventos Acadêmicos{% endblock %}
+
+{% block page_title %}Bem-vindo ao UniEvents!{% endblock %}
+{% block page_subtitle %}Conectando estudantes e eventos acadêmicos{% endblock %}
+
+{% block content %}
+<div class="fade-in">
+    <!-- Hero Section -->
+    <div class="card" style="background: linear-gradient(135deg, var(--primary-blue), var(--primary-purple)); border: none; margin-bottom: 2rem; overflow: hidden; position: relative;">
+        <div class="card-body" style="padding: 4rem 2rem; text-align: center; color: white; position: relative; z-index: 1;">
+            <!-- Decoração de Fundo -->
+            <div style="position: absolute; top: -50px; right: -50px; width: 300px; height: 300px; background: rgba(255,255,255,0.05); border-radius: 50%; z-index: 0;"></div>
+            <div style="position: absolute; bottom: -100px; left: -100px; width: 400px; height: 400px; background: rgba(255,255,255,0.03); border-radius: 50%; z-index: 0;"></div>
+            
+            <div style="position: relative; z-index: 1;">
+                <div style="width: 100px; height: 100px; margin: 0 auto 2rem; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(10px);">
+                    <i class="fas fa-graduation-cap" style="font-size: 3rem;"></i>
+                </div>
+                
+                <h1 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 1rem; color: white;">
+                    UniEvents
+                </h1>
+                
+                <p style="font-size: 1.25rem; margin-bottom: 2rem; opacity: 0.95; max-width: 600px; margin-left: auto; margin-right: auto;">
+                    Sua plataforma completa para gerenciar e participar de eventos acadêmicos
+                </p>
+                
+                <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                    <a href="{% url 'sgea_app:eventos_lista' %}" class="btn" style="background: white; color: var(--primary-blue); font-size: 1.125rem; padding: 1rem 2rem;">
+                        <i class="fas fa-calendar-alt"></i> Explorar Eventos
+                    </a>
+                    
+                    {% if not user.is_authenticated %}
+                    <a href="{% url 'sgea_app:usuario_cadastro' %}" class="btn btn-outline" style="border-color: white; color: white; font-size: 1.125rem; padding: 1rem 2rem;">
+                        <i class="fas fa-user-plus"></i> Criar Conta Grátis
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Recursos Principais -->
+    <div style="margin-bottom: 3rem;">
+        <h2 style="text-align: center; margin-bottom: 2rem; color: var(--text-primary);">
+            <i class="fas fa-star" style="color: var(--accent-cyan);"></i>
+            Por que usar o UniEvents?
+        </h2>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
+            <!-- Feature 1 -->
+            <div class="card" style="text-align: center;">
+                <div class="card-body">
+                    <div style="width: 80px; height: 80px; margin: 0 auto 1.5rem; background: linear-gradient(135deg, var(--primary-blue), var(--primary-purple)); border-radius: 20px; display: flex; align-items: center; justify-content: center; transform: rotate(45deg);">
+                        <i class="fas fa-calendar-plus" style="font-size: 2rem; color: white; transform: rotate(-45deg);"></i>
+                    </div>
+                    <h3 style="margin-bottom: 1rem; color: var(--text-primary);">Cadastre Eventos</h3>
+                    <p style="color: var(--text-secondary);">
+                        Crie e gerencie eventos acadêmicos de forma rápida e intuitiva
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Feature 2 -->
+            <div class="card" style="text-align: center;">
+                <div class="card-body">
+                    <div style="width: 80px; height: 80px; margin: 0 auto 1.5rem; background: linear-gradient(135deg, var(--accent-cyan), var(--success)); border-radius: 20px; display: flex; align-items: center; justify-content: center; transform: rotate(45deg);">
+                        <i class="fas fa-users" style="font-size: 2rem; color: white; transform: rotate(-45deg);"></i>
+                    </div>
+                    <h3 style="margin-bottom: 1rem; color: var(--text-primary);">Gerencie Inscrições</h3>
+                    <p style="color: var(--text-secondary);">
+                        Controle de participantes e vagas de forma automática e eficiente
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Feature 3 -->
+            <div class="card" style="text-align: center;">
+                <div class="card-body">
+                    <div style="width: 80px; height: 80px; margin: 0 auto 1.5rem; background: linear-gradient(135deg, var(--primary-purple), #9b59b6); border-radius: 20px; display: flex; align-items: center; justify-content: center; transform: rotate(45deg);">
+                        <i class="fas fa-certificate" style="font-size: 2rem; color: white; transform: rotate(-45deg);"></i>
+                    </div>
+                    <h3 style="margin-bottom: 1rem; color: var(--text-primary);">Certificados Automáticos</h3>
+                    <p style="color: var(--text-secondary);">
+                        Emissão automática de certificados para todos os participantes
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Estatísticas -->
+    <div class="card" style="background: var(--bg-secondary); border: none; margin-bottom: 3rem;">
+        <div class="card-body" style="padding: 3rem 2rem;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; text-align: center;">
+                <div>
+                    <h2 style="font-size: 3rem; font-weight: 800; color: var(--primary-blue); margin: 0;">500+</h2>
+                    <p style="color: var(--text-secondary); margin: 0.5rem 0 0 0;">Eventos Realizados</p>
+                </div>
+                <div>
+                    <h2 style="font-size: 3rem; font-weight: 800; color: var(--accent-cyan); margin: 0;">2,500+</h2>
+                    <p style="color: var(--text-secondary); margin: 0.5rem 0 0 0;">Usuários Ativos</p>
+                </div>
+                <div>
+                    <h2 style="font-size: 3rem; font-weight: 800; color: var(--primary-purple); margin: 0;">10,000+</h2>
+                    <p style="color: var(--text-secondary); margin: 0.5rem 0 0 0;">Certificados Emitidos</p>
+                </div>
+                <div>
+                    <h2 style="font-size: 3rem; font-weight: 800; color: var(--success); margin: 0;">98%</h2>
+                    <p style="color: var(--text-secondary); margin: 0.5rem 0 0 0;">Satisfação</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Como Funciona -->
+    <div style="margin-bottom: 3rem;">
+        <h2 style="text-align: center; margin-bottom: 2rem; color: var(--text-primary);">
+            <i class="fas fa-question-circle" style="color: var(--primary-blue);"></i>
+            Como Funciona?
+        </h2>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+            <div style="text-align: center;">
+                <div style="width: 60px; height: 60px; margin: 0 auto 1rem; background: var(--primary-blue); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem; font-weight: 700;">
+                    1
+                </div>
+                <h4 style="margin-bottom: 0.5rem; color: var(--text-primary);">Crie sua Conta</h4>
+                <p style="color: var(--text-secondary);">Cadastre-se gratuitamente em poucos segundos</p>
+            </div>
+            
+            <div style="text-align: center;">
+                <div style="width: 60px; height: 60px; margin: 0 auto 1rem; background: var(--accent-cyan); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem; font-weight: 700;">
+                    2
+                </div>
+                <h4 style="margin-bottom: 0.5rem; color: var(--text-primary);">Encontre Eventos</h4>
+                <p style="color: var(--text-secondary);">Explore eventos acadêmicos do seu interesse</p>
+            </div>
+            
+            <div style="text-align: center;">
+                <div style="width: 60px; height: 60px; margin: 0 auto 1rem; background: var(--primary-purple); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem; font-weight: 700;">
+                    3
+                </div>
+                <h4 style="margin-bottom: 0.5rem; color: var(--text-primary);">Inscreva-se</h4>
+                <p style="color: var(--text-secondary);">Garanta sua vaga com um clique</p>
+            </div>
+            
+            <div style="text-align: center;">
+                <div style="width: 60px; height: 60px; margin: 0 auto 1rem; background: var(--success); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem; font-weight: 700;">
+                    4
+                </div>
+                <h4 style="margin-bottom: 0.5rem; color: var(--text-primary);">Receba seu Certificado</h4>
+                <p style="color: var(--text-secondary);">Certificado gerado automaticamente</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- CTA Final -->
+    {% if not user.is_authenticated %}
+    <div class="card" style="background: linear-gradient(135deg, var(--primary-purple), var(--primary-blue)); border: none;">
+        <div class="card-body" style="padding: 3rem 2rem; text-align: center; color: white;">
+            <h2 style="font-size: 2rem; margin-bottom: 1rem; color: white;">
+                Pronto para Começar?
+            </h2>
+            <p style="font-size: 1.125rem; margin-bottom: 2rem; opacity: 0.95;">
+                Junte-se a milhares de estudantes e professores que já usam o UniEvents
+            </p>
+            <a href="{% url 'sgea_app:usuario_cadastro' %}" class="btn" style="background: white; color: var(--primary-blue); font-size: 1.125rem; padding: 1rem 2.5rem;">
+                <i class="fas fa-rocket"></i> Criar Conta Gratuita
+            </a>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
