@@ -225,24 +225,27 @@ REST_FRAMEWORK = {
 
 
 # Email Configuration
-# Configuração para envio de emails (Gmail)
+
 
 try:
     from decouple import config
     
-    EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+
     EMAIL_HOST = "smtp.gmail.com"
     EMAIL_PORT = 587
     EMAIL_USE_TLS = True
-    EMAIL_HOST_USER = config("EMAIL_HOST_USER")
-    EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
+    EMAIL_HOST_USER = config("EMAIL_HOST_USER", default="placeholder@sgea.com")
+    EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD", default="senha_placeholder")
     DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
-    
-except ImportError:
-    # Fallback para console backend durante desenvolvimento
-    # (mostra os emails no console ao invés de enviar)
-    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-    print("AVISO: python-decouple não instalado. Emails serão exibidos no console.")
+
+
+    EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
+except:
+   
+    EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+    DEFAULT_FROM_EMAIL = "sgea@sistema.com"
+
 
 
 # Messages Framework
