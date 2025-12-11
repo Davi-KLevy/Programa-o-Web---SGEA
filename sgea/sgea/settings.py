@@ -163,9 +163,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'sgea_app.Usuario'
 
 # URLs de redirecionamento
-LOGIN_REDIRECT_URL = 'dashboard'
-LOGIN_URL = 'login'
-LOGOUT_REDIRECT_URL = 'login'
+LOGIN_REDIRECT_URL = 'sgea_app:dashboard' 
+LOGIN_URL = 'sgea_app:login'
+LOGOUT_REDIRECT_URL = 'sgea_app:login'
 
 # Formatos de data e hora
 DATE_INPUT_FORMATS = [
