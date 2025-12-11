@@ -8,6 +8,7 @@ from .forms import *
 from .models import *
 from django.contrib.auth import get_user_model
 from .tokens import token_ativacao
+from .utils import enviar_email_confirmacao
 # Importe o forms.py que criamos no passo anterior.
 
 # --- Funções Auxiliares de Permissão ---

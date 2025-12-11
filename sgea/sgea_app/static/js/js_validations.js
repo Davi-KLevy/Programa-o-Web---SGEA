@@ -391,16 +391,15 @@ if (document.readyState === 'loading') {
   initSidebarToggle();
 }
 
-// Exportar funções globais
-window.UniEvents = {
-  validatePhone,
-  validateEmail,
-  validatePassword,
-  validatePasswordMatch,
-  validateParticipants,
-  validateEventDate,
-  validateImageFile,
-  previewImage,
-  validateForm,
-  phoneMask
-};
+window.UniEvents = window.UniEvents || {}; 
+
+window.UniEvents.validatePhone = validatePhone;
+window.UniEvents.validateEmail = validateEmail;
+window.UniEvents.validatePasswordMatch = validatePasswordMatch;
+window.UniEvents.showPasswordStrength = showPasswordStrength; 
+window.UniEvents.validateParticipants = validateParticipants;
+window.UniEvents.validateEventDate = validateEventDate;
+window.UniEvents.validateImageFile = validateImageFile;
+window.UniEvents.previewImage = previewImage;
+window.UniEvents.phoneMask = phoneMask;
+window.UniEvents.validateForm = validateForm;

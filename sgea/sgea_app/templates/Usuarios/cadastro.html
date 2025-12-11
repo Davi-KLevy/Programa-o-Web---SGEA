@@ -18,6 +18,13 @@
             <form id="cadastroForm" method="POST" novalidate>
                 {% csrf_token %}
                 
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger mb-4" role="alert">
+                        {% for error in form.non_field_errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
                 <!-- Nome Completo -->
                 <div class="form-group">
                     <label class="form-label" for="nome">
@@ -29,6 +36,12 @@
                            name="nome" 
                            placeholder="Ex: João Silva"
                            required>
+
+                    {% for error in form.nome.errors %}
+                        <div class="invalid-feedback" style="display: block;">
+                            {{ error }}
+                        </div>
+                    {% endfor %}
                 </div>
                 
                 <!-- Email -->
@@ -149,11 +162,11 @@
     
     // Mostrar força da senha
     if (senhaInput && strengthDiv) {
-        senhaInput.addEventListener('input', function() {
-            window.UniEvents.validatePassword(this.value);
-        });
-    }
-    
+            senhaInput.addEventListener('input', function() {
+            window.UniEvents.showPasswordStrength(this.value, strengthDiv);
+   });
+}
+
     // Validar no submit
     form.addEventListener('submit', function(e) {
         if (!window.UniEvents.validateForm(this)) {
