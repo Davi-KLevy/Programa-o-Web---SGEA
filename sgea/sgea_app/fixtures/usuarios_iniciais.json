@@ -1,0 +1,44 @@
+[
+  {
+    "model": "sgea_app.usuario",
+    "pk": 1,
+    "fields": {
+      "nome": "Organizador do Sistema",
+      "login": "organizador@sgea.com",
+      "email": "organizador@sgea.com",
+      "perfil": "Organizador",
+      "instituicao_ensino": "",
+      "telefone": "(00) 0000-0000",
+      "is_active": true,
+      "password": "pbkdf2_sha256$720000$O2pXagWdtfQjJ0RjKuADFf$GZ98PfZ2k+U0SXo6BHAD5Z33t3o8PwsZ9iER7DboYvQ="
+    }
+  },
+  {
+    "model": "sgea_app.usuario",
+    "pk": 2,
+    "fields": {
+      "nome": "Aluno Exemplo",
+      "login": "aluno@sgea.com",
+      "email": "aluno@sgea.com",
+      "perfil": "Aluno",
+      "instituicao_ensino": "Universidade Exemplo",
+      "telefone": "(00) 0000-0000",
+      "is_active": true,
+      "password": "pbkdf2_sha256$720000$aTkvb0q4311KfLxY4Jf8ep$Q1wh1Ry/KqGBAjNBu6jjOfseRGIGAP0SSw8c31USgGg="
+    }
+  },
+  {
+    "model": "sgea_app.usuario",
+    "pk": 3,
+    "fields": {
+      "nome": "Professor Exemplo",
+      "login": "professor@sgea.com",
+      "email": "professor@sgea.com",
+      "perfil": "Professor",
+      "instituicao_ensino": "Universidade Exemplo",
+      "telefone": "(00) 0000-0000",
+      "is_active": true,
+      "password": "pbkdf2_sha256$720000$vNm83tewsdt5H7T8g6sz8p$P5n6RVfpRC9KFkpjgNY4KrkJY0C3+lPqzHQGs9EUhK4="
+    }
+  }
+]

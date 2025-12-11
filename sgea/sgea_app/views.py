@@ -8,6 +8,8 @@ from .forms import *
 from .models import *
 from django.contrib.auth import get_user_model
 from .tokens import token_ativacao
+from django.contrib.auth.tokens import default_token_generator
+
 from .utils import enviar_email_confirmacao
 # Importe o forms.py que criamos no passo anterior.
 
@@ -126,10 +128,13 @@ def confirmar_email(request, uid, token):
     if token_ativacao.check_token(usuario, token):
         usuario.is_active = True
         usuario.save()
-        return HttpResponse("E-mail confirmado com sucesso! Sua conta foi ativada.", status=200)
+        return HttpResponse(
+            "E-mail confirmado com sucesso! Sua conta foi ativada.", 
+            status=200
+        )
     else:
         return HttpResponse("Link inválido ou expirado.", status=400)
-
+    
 # ADICIONADO: Views de login/logout básicas
 def usuario_login(request):
     """Página de login"""

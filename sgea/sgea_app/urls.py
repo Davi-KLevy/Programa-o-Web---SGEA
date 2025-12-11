@@ -17,6 +17,9 @@ urlpatterns = [
     path('login/', views.usuario_login, name='login'),
     path('logout/', views.usuario_logout, name='logout'),
     path('perfil/', views.usuario_perfil, name='perfil'),
+
+    # Ativação por e-mail
+     path('confirmar/<int:uid>/<str:token>/', views.confirmar_email, name='confirmar_email'),
     
     # Eventos
     path('eventos/', views.eventos_lista, name='eventos_lista'),
